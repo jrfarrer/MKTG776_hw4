@@ -31,7 +31,9 @@ panderOptions('keep.trailing.zeros', TRUE)
 options(scipen = 10, expressions = 10000, digits = 4)
 
 toothpaste_data <- readxl::read_excel("HW toothpaste data.xlsx")
+```
 
+```{r echo = FALSE}
 toothpaste_data %>%
   pander(caption = "Raw Toothpaste Data")
 ```
@@ -83,7 +85,8 @@ bb_params <-
     , pi = c(NA, par_bb_zi$par[3], par_bb_onei$par[3])
   ) %>%
   mutate(
-    model = factor(model, levels = c("Beta-Binomial", "Zero-Inflated Beta-Binomial", "One-Inflated Beta-Binomial"))
+    model = factor(model, 
+          levels = c("Beta-Binomial", "Zero-Inflated Beta-Binomial", "One-Inflated Beta-Binomial"))
   )
 ```
 
@@ -100,6 +103,7 @@ In order to select the "best" model we will use
 
 1. Graphical review of the results
 2. Goodness of Fit test
+3. Viability of the associated narrative
 
 First we find the expected number of panelists (out of 3,035) that would have purchases the focal brand $m$ times out of 5.
 
@@ -146,11 +150,14 @@ The goodness of fit test shows that beta-binomial and zero-inflated beta-binomia
 bb_expected %>%
   group_by(model) %>%
   summarise(chisq = sum(chisq)) %>%
-  mutate(p.value = pchisq(chisq, df = 6 - 2 -if_else(str_detect(model, "Inflated"), 1L, 0L) - 1, lower.tail = FALSE)) %>%
+  mutate(p.value = pchisq(chisq, 
+          df = 6 - 2 - if_else(str_detect(model, "Inflated"), 1L, 0L) - 1, lower.tail = FALSE)) %>%
   pander(caption = "Goodness of Fit Test", round = 8)
 ```
 
-Using the likehood ratio test we check to see if the larger model (containing $\pi = 1$) is meaningful. We find no reason to believe that the models are the same and thus we select the One-Inflated Beta-Binomial as "best" model of the three.
+Using the likehood ratio test we check to see if the larger model (containing $\pi = 1$) is meaningful. We find no reason to believe that the models are the same. 
+
+We imagine that a one-inflated model occurs becuase that brand went on promotion (making it the best value option) during the panelist observation period. In doing so this action made it more likely than not that a panelist would purchase the toothpaste brand at least once, but also less inclined to purchase it again when it returned to regular price (i.e. "renting demand"). Based on the graphical display, the goodness-of-fit test, and the viability of the narrative we select the One-Inflated Beta-Binomial as "best" model of the three.
 
 ```{r}
 bb_params %>%
@@ -300,12 +307,13 @@ billboard <-
     , cumulative_count = c(1,2,3, 3, 3, 3)
   ) %>%
   rowwise() %>%
-  mutate(estimated_lambda = fn_posterior_lambda(cumulative_count, billboard_r, billboard_alpha, t = week))
+  mutate(estimated_lambda = fn_posterior_lambda(cumulative_count, 
+                                                billboard_r, billboard_alpha, t = week))
 ```
 
 Below are the posterior estimates of lambda.
 
-```{r}
+```{r echo = FALSE}
 billboard %>%
   pander(caption = "Posterior Estimates of Lambda")
 ```
@@ -326,8 +334,10 @@ data_frame(estimate = rgamma(10000, billboard_r, billboard_alpha)) %>%
   labs(x = expression(Posterior~~Estimates~~of~~lambda), y = "Density",
        title = expression(Posterior~~Estimates~~of~~lambda),
        subtitle = expression(r == 0.969~~alpha == 0.218)) +
-  geom_segment(aes(x = (billboard_r / billboard_alpha), xend = (billboard_r / billboard_alpha), y = 0, yend = .2)) +
-  geom_label(data = data_frame(x = (billboard_r / billboard_alpha), y = .15, label = paste0('E~group("[",lambda,"]") ==', (billboard_r / billboard_alpha))), 
+  geom_segment(aes(x = (billboard_r / billboard_alpha), 
+                   xend = (billboard_r / billboard_alpha), y = 0, yend = .2)) +
+  geom_label(data = data_frame(x = (billboard_r / billboard_alpha), y = .15, 
+              label = paste0('E~group("[",lambda,"]") ==', (billboard_r / billboard_alpha))), 
              aes(x, y, label = label), hjust = -.05, parse = TRUE)
 ```
 
@@ -349,10 +359,10 @@ Now with (\ref{expectation_at_0}), we can express the expected number of purchae
 \begin{align}
 \ E[X_2|X_1 = x_1] & = \sum_{x_2} x_2 P(X_2 = x_2) P(Not\,HCNB) \\
  & = \sum_{x_2} x_2 P(X_2 = x_2) \bigg(1 - P(HCNB)\bigg) \\
- & = \sum_{x_2} x_2 P(X_2 = x_2) \bigg(1 - \frac{\pi}{\pi + (1-\pi)\big(\frac{\alpha}{\alpha+t}\big)^r}\bigg) \label{expectation_midsetp}
+ & = \sum_{x_2} x_2 P(X_2 = x_2) \bigg(1 - \frac{\pi \delta_{x,0}}{\pi + (1-\pi)\big(\frac{\alpha}{\alpha+t}\big)^r}\bigg) \label{expectation_midsetp}
 \end{align}
 
-The component in the parentheses does not depend on $x_2$ and we know that 
+where $\delta_{x,0}$ is Kronecker delta (i.e. $\delta_{x,0} = 1$ if $x=0$ and 0 otherwise). The component in the parentheses in (\ref{expectation_midsetp}) does not depend on $x_2$ and we know that 
 
 \begin{align}
 \ E[X_2] = \sum_{x_2} x_2 P(X_2 = x_2) = \frac{r + x}{\alpha + 1}
@@ -361,6 +371,6 @@ The component in the parentheses does not depend on $x_2$ and we know that
 thus, (\ref{expectation_midsetp}) simplies to 
 
 \begin{align}
-\ E[X_2|X_1 = x] & = \frac{r + x}{\alpha + 1} \bigg(1 - \frac{\pi}{\pi + (1-\pi)\big(\frac{\alpha}{\alpha+t}\big)^r}\bigg) 
+\ E[X_2|X_1 = x] & = \frac{r + x}{\alpha + 1} \bigg(1 - \frac{\pi \delta_{x,0}}{\pi + (1-\pi)\big(\frac{\alpha}{\alpha+t}\big)^r}\bigg) 
 \end{align}
 

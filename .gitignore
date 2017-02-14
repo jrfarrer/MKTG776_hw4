@@ -5,8 +5,8 @@
 .Rapp.history
 *.log*
   
-  # Example code in package build process
-  *-Ex.R
+# Example code in package build process
+*-Ex.R
 
 # Output files from R CMD build
 /*.tar.gz
@@ -15,10 +15,10 @@
 /*.Rcheck/
   
   # RStudio files
-  .Rproj.user/
+.Rproj.user/
   
   # produced vignettes
-  vignettes/*.html
+vignettes/*.html
 vignettes/*.pdf
 
 # OAuth2 token, see https://github.com/hadley/httr/releases/tag/v0.3
@@ -26,10 +26,10 @@ vignettes/*.pdf
 
 # knitr and R markdown default cache directories
 /*_cache/
-  /cache/
+/cache/
   
-  # Temporary files created by R markdown
-  *.utf8.md
+# Temporary files created by R markdown
+*.utf8.md
 *.knit.md
 
 .DS_Store
@@ -37,7 +37,7 @@ vignettes/*.pdf
 /data/
   
   
-  .Rproj.user
+.Rproj.user
 *.xlsx
 *.xls
-.Rproj.user
+
