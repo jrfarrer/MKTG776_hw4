@@ -271,21 +271,27 @@ To derive the posterior distribution of $\lambda$ for an NBD model for a artbita
 
 ## Conditional Expectation
 
-We are looking to find the conditional expectation for an NBD for a future period of length $t^*$ applied to a customer who made $x$ purchases over a calibration period of length $t$. We start with the distribution of $X_2(t^*)$, conditional on $X_1(t) = x_1$, that is
+We are looking to find the conditional expectation for an NBD for a future period of length $t^*$ applied to a customer who made $x$ purchases over a calibration period of length $t$. We start with the distribution of $X_2(t^\ast)$, conditional on $X_1(t) = x_1$, that is
 
 \begin{equation}
 \ P(X_2(t^\ast)|X_1(t) = x) = \frac{\Gamma(r+x_{1}+x_{2})}{\Gamma(r) (x_{1}+x_{2})!}\bigg(\frac{\alpha}{\alpha+t+t^\ast}\bigg)^r\bigg(\frac{t+t^\ast}{\alpha+t+t^\ast}\bigg)^x
 \end{equation}
 
-Then, the expected value of $X_2$, conditioned on the fact that $X_1 = x$ (i.e., the conditional expectation of $X_2$) is
+Then, the expected value of $X_2$, conditioned on the fact that $X_1 = x$ (i.e., the conditional expectation of $X_2$) is based based on the fact that $E[X] = \frac{rt}{\alpha}$.
 
 \begin{equation}
-\ E[X_2(t^\ast)|X_1(t) = x] = \frac{r+x}{\alpha + t}
+\ E[X_2(t^\ast)|X_1(t) = x] = \frac{t^\ast(r+x)}{\alpha + t}
+\end{equation}
+
+and the expected value of $\lambda(t^\ast)$, condition on the fact that $X_1 = x$ in period $t$ is also 
+
+\begin{equation}
+\ E[\lambda(t^\ast)|X_1(t) = x] = \frac{t^\ast(r+x)}{\alpha + t} = t^\ast\bigg[\big(\frac{\alpha}{\alpha+t}\big)\frac{r}{\alpha} + \big(\frac{t}{\alpha+t}\big)x \bigg]
 \end{equation}
 
 # Question 3
 
-To calculate the posterior estimates of $\lambda$, we can use the formula
+To calculate the posterior estimates of $\lambda$, we can use the formula 
 
 \begin{equation} \label{expectation_gamma}
 \ E[\lambda | X(t) = t] = \frac{r+x}{\alpha + t}
